@@ -1,0 +1,22 @@
+FROM python:3.13.7-slim
+
+ENV PYTHONUNBUFFERED=True
+
+WORKDIR /usr/src/app
+
+RUN apt-get update && apt-get install -y \
+    build-essential \
+    gcc \
+    && rm -rf /var/lib/apt/lists/*
+
+COPY ./requirements.txt ./
+
+RUN pip install --no-cache-dir -r requirements.txt
+
+COPY ./ui ./
+
+ENV PYTHONPATH=/usr/src/app
+
+EXPOSE 4060
+
+CMD [ "streamlit", "run", "app.py", "--server.address=0.0.0.0", "--server.port=4060", "--server.headless=true"]

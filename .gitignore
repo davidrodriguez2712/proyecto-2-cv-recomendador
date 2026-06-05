@@ -1,0 +1,10 @@
+## Archivos
+main_antiguo.py
+*.env
+
+## Carpetas
+
+__pycache__/
+.vscode/
+logs/
+test/
