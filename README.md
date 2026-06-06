@@ -329,7 +329,6 @@ Proyecto
 flowchart TD
 
     USUARIO[Usuario]
-    EASYPANEL[EasyPanel VPS Contabo]
     FASTAPI[FastAPI Container]
     FRONTEND[Streamlit Container]
     POSTGRESSQL[(PostgreSQL Container)]
