@@ -332,24 +332,38 @@ flowchart TD
     EASYPANEL[EasyPanel VPS Contabo]
     FASTAPI[FastAPI Container]
     FRONTEND[Streamlit Container]
-    POSTGRESSQL[(PostgresSQL Container)]
+    POSTGRESSQL[(PostgreSQL Container)]
     OPENAI[OpenAI API]
     PINECONE[Pinecone Cloud]
 
-    USUARIO --> EASYPANEL
-    EASYPANEL --> FASTAPI
-    EASYPANEL --> FRONTEND
-    EASYPANEL --> POSTGRESSQL
+    USUARIO --> STREAMLIT
+    STREAMLIT --> FASTAPI
+    FASTAPI --> POSTGRESSQL
     FASTAPI --> OPENAI
     FASTAPI --> PINECONE
 
     subgraph Contabo VPS
-        EASYPANEL
         FASTAPI
         FRONTEND
         POSTGRESSQL
+    end
 
 ```
+
+## Variables de Entorno
+
+| Variable | Obligatoria | Descripción |
+|-----------|------------|-------------|
+| `GOOGLE_API_KEY` | ✅ | Clave de acceso a los modelos de Google Gemini. |
+| `OPENAI_API_KEY` | ✅ | Clave de acceso a los modelos y embeddings de OpenAI. |
+| `PINECONE_API_KEY` | ✅ | Clave de acceso a Pinecone para almacenamiento y búsqueda vectorial. |
+| `TAVILY_API_KEY` | ✅ | Clave de acceso a Tavily para búsquedas web en tiempo real. |
+| `LANGCHAIN_API_KEY` | ❌ | Clave de LangSmith para monitoreo, trazabilidad y observabilidad de agentes. |
+| `LANGCHAIN_PROJECT` | ❌ | Nombre del proyecto registrado en LangSmith. |
+| `LANGCHAIN_TRACING_V2` | ❌ | Habilita el trazado de ejecuciones en LangSmith (`true` / `false`). |
+| `HF_TOKEN` | ❌ | Token de acceso a Hugging Face para descargar modelos o recursos privados. |
+| `GROQ_API_KEY` | ❌ | Clave de acceso a los modelos servidos por Groq. |
+
 
 ## Próximas Mejoras
 
