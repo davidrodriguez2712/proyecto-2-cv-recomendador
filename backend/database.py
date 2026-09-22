@@ -6,6 +6,8 @@ from dotenv import find_dotenv, load_dotenv
 load_dotenv(find_dotenv(), override=False)
 
 url_bd = os.getenv("URL_DATABASE")
+if url_bd:
+    url_bd = url_bd.strip("'\"").strip()
 
 # engine = create_engine(url_bd) # forma síncrona (sync)
 
