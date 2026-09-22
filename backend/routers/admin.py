@@ -40,16 +40,15 @@ async def get_all_users(db: db_dependency, user: user_dependency):
 @router.post("/create", status_code= status.HTTP_201_CREATED)
 async def create_user(db: db_dependency, user: user_dependency, user_form: CreateUser):
     try:
-        # MÉTODO ASYNC
+        # Validar permisos del usuario autenticado
         response = await db.execute(
-            select(User).where(User.username == user_form.user)
+            select(User).where(User.username == user.get("user"))
         )
-        db_validation = response.scalar_one_or_none()
+        current_user = response.scalar_one_or_none()
 
-        # MÉTODO SYNC
-        # db_validation = db.query(User).filter(User.id == user.get("id_user")).first()
-        if db_validation is None or db_validation.rol != "admin":
+        if current_user is None or current_user.rol != "admin":
             raise HTTPException(status_code=401, detail="Don't have permissions for this endpoint.")
+
         userdb = User(
             username = user_form.user,
             email = user_form.email,
@@ -60,11 +59,13 @@ async def create_user(db: db_dependency, user: user_dependency, user_form: Creat
         )
         
         db.add(userdb)
-        # db.commit() # método sync
         await db.commit()
+        return {"message": "User created successfully"}
+    except HTTPException:
+        raise
     except Exception as e:
         print(f"Error: {e}")
-        raise HTTPException(status_code=401, detail= "Creation user Failed")
+        raise HTTPException(status_code=400, detail= "Creation user Failed")
         
 
 
