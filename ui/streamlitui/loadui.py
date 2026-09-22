@@ -15,7 +15,7 @@ class LoadStreamlitUI:
             page_icon= "💼"
         )
         st.header("💼 " + self.config.get_page_title())
-        st.subheader("Proyecto en Desarrollo... Por ahora la única funcionalidad es la de Subir CV en PDF --> Hacer MATCH con los mejores")
+        st.caption("🚀 Evalúa tu CV en la barra lateral para hacer match con ofertas de empleo o consulta salarios y orientación profesional en el chat.")
         st.session_state.timeframe = ''
         st.session_state.IsFetchButtonClicked = False
         st.session_state.UploadPDF = False
