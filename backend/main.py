@@ -18,7 +18,7 @@ from dotenv import load_dotenv, find_dotenv
 import asyncio
 from contextlib import asynccontextmanager
 
-load_dotenv(find_dotenv(), override= True)
+load_dotenv(find_dotenv(), override=False)
 
 logger = setup_backend_logger()
 

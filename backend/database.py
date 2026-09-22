@@ -3,7 +3,7 @@ from sqlalchemy.ext.asyncio import create_async_engine, AsyncSession, AsyncEngin
 from sqlalchemy.orm import Session, sessionmaker, declarative_base
 import os
 from dotenv import find_dotenv, load_dotenv
-load_dotenv(find_dotenv(), override= True)
+load_dotenv(find_dotenv(), override=False)
 
 url_bd = os.getenv("URL_DATABASE")
 
