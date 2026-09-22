@@ -46,5 +46,18 @@ class LoginRequest(BaseModel):
     username: str
     password: str
 
+class ChatMessageDTO(BaseModel):
+    role: str  # 'user' | 'assistant'
+    content: str
+
+class GeneralQueryRequest(BaseModel):
+    query: str
+    history: list[ChatMessageDTO] = []
+
+class GeneralQueryResponse(BaseModel):
+    response: str
+    tools_used: list[str] = []
+
+
 
 
