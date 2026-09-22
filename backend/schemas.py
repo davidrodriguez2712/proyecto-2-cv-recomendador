@@ -6,6 +6,7 @@ from pydantic import BaseModel, Field
 
 class User(Base):
     __tablename__ = "users"
+    __table_args__ = {'extend_existing': True}
     id = Column(Integer, primary_key= True, index= True)
     username = Column(String, unique= True, nullable= False)
     email = Column(String, unique=True, nullable= False)
@@ -16,12 +17,14 @@ class User(Base):
 
 class MemoryLongTermResume(Base):
     __tablename__ = "memory_resume"
+    __table_args__ = {'extend_existing': True}
     user_id = Column(Integer, ForeignKey("users.id"), primary_key=True)
     message = Column(String)
     last_update = Column(DateTime(timezone=True), server_default=func.now(), onupdate= func.now())
 
 class MemoryLongTermVectors(Base):
     __tablename__ = "memory_vector"
+    __table_args__ = {'extend_existing': True}
     user_id = Column(Integer, primary_key=True)
     id_user = Column(Integer, ForeignKey("users.id"))
     message = Column(String)
