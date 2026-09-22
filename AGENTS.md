@@ -93,16 +93,16 @@ proyect1/
 
 | Módulo / Funcionalidad | Estado Actual | Ubicación Principal |
 | :--- | :--- | :--- |
-| **Login y JWT Auth** | **Funcional con Deuda** | `backend/core/security.py` |
+| **Login y JWT Auth** | **100% Funcional** | `backend/core/security.py` |
 | **Pipeline CV Recomendador** | **100% Funcional** | `backend/graph/graph_builder.py`, `backend/nodes/cv_nodes.py` |
 | **Structured Output CV -> Empleos** | **100% Funcional** | `backend/state/state_graph.py` |
 | **Persistencia Pinecone (CVs + Empleos)** | **100% Funcional** | `backend/nodes/cv_nodes.py` |
 | **Frontend: Subida de CV & Matching** | **100% Funcional** | `ui/pages/Chat.py`, `ui/streamlitui/` |
-| **RAG de Sueldos Perú** | **En Progreso (Parcial)** | `backend/nodes/react_agent.py` |
-| **Agente Conversacional ReAct** | **En Progreso (Incompleto)**| `backend/graph/react_graph_builder.py`, `backend/nodes/react_agent.py` |
-| **Búsqueda Web con Tavily** | **Herramienta creada, sin unir al grafo** | `backend/tools/web_search.py` |
-| **Memoria Conversacional en Redis** | **Parcialmente Integrada** | `backend/memory/short_term.py` |
-| **Endpoint `/agent/general-query`** | **Incompleto (Stub)** | `backend/routers/agent.py` |
+| **RAG de Sueldos Perú** | **100% Funcional (Tool)** | `backend/tools/salary_tool.py` |
+| **Agente Conversacional ReAct** | **100% Funcional** | `backend/graph/react_graph_builder.py` |
+| **Búsqueda Web con Tavily** | **100% Funcional (Tool)** | `backend/tools/web_search.py` |
+| **Memoria Conversacional** | **Funcional en State/Frontend** | `ui/pages/Chat.py`, `backend/routers/agent.py` |
+| **Endpoint `/agent/general-query`** | **100% Funcional** | `backend/routers/agent.py` |
 | **Recomendador de Candidatos para Reclutador** | **En Backlog** | Pendiente |
 | **Generador de CV adaptado al puesto** | **En Backlog** | Pendiente |
 

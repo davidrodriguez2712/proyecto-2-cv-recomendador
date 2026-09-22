@@ -62,8 +62,8 @@ Reducir las horas de búsqueda del candidato ideal, de la siguiente forma:
 |---------------|-------------|--------|
 | Recomendación Empleos | El usuario ingresa su CV y obtendrá como respuesta el top 5 empleos que hagan mayor match. | Implementado |
 | Feedback de mejoras y gaps | El usuario además de recibir los top 5 empleos que hagan mayor match, recibe un feedback por cada uno enfocado en los gaps que le faltan para ser más idóneo al puesto | Implementado |
-| Responder sobre salarios | La LLM usa como contexto una base vectorial con datos de salarios en distintos perfiles tech y administrativos en Perú. Devuelve rangos salariales y las empresas que los pagan | En Proceso |
-| Responder sobre cosas nuevas | La LLM usa tools de búsqueda web para responder a preguntas que no se encuentran en su base de entrenamiento o sean eventos futuros para evitar la alucinación. | En Proceso |
+| Responder sobre salarios | La LLM usa como contexto una base vectorial con datos de salarios en distintos perfiles tech y administrativos en Perú. Devuelve rangos salariales y las empresas que los pagan | Implementado |
+| Responder sobre cosas nuevas | La LLM usa tools de búsqueda web para responder a preguntas que no se encuentran en su base de entrenamiento o sean eventos futuros para evitar la alucinación. | Implementado |
 | Recomendación Candidatos | El reclutador ingresa una palabra clave o descripción del perfil buscado y obtendrá como respuesta el top 5 candidadtos que hagan mayor match. | En Backlog |
 | Creación de CV por cada puesto | El usuario tendrá la opción de generar un CV optimizado para el puesto que esté interesado antes de enviar su postulación | En Backlog |
 
@@ -366,6 +366,6 @@ flowchart TD
 
 ## Próximas Mejoras
 
-- Responder sobre salarios
-- Responder sobre cosas nuevas
-- Recomendación candidatos
+- Recomendación candidatos (para reclutadores)
+- Creación de CV adaptado por puesto
+- Persistencia de historial conversacional en PostgreSQL (memoria de largo plazo)
