@@ -16,3 +16,11 @@ def test_salary_tool_resilience_on_invalid_input():
     result = consultar_sueldos_peru.invoke({"consulta": ""})
     assert isinstance(result, str)
     assert "indica" in result.lower() or "error" in result.lower() or "sueldo" in result.lower()
+
+def test_salary_tool_caches_resources():
+    from backend.tools.salary_tool import get_bm25_model, get_pinecone_index
+    model1 = get_bm25_model()
+    model2 = get_bm25_model()
+    assert model1 is model2
+    assert model1 is not None
+
