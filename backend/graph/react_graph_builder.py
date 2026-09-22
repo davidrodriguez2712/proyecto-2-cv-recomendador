@@ -1,68 +1,53 @@
-from dotenv import load_dotenv, find_dotenv
-import os
-from langgraph.graph import StateGraph, END, START
-from llms.openaillm import OpenAILLM
-from state.react_state_graph import StateAgentReact
+import logging
+from langgraph.graph import StateGraph, START, END
 from langgraph.prebuilt import ToolNode, tools_condition
-from nodes.react_agent import ReactNode
+from langchain_core.messages import SystemMessage
+
+from state.react_state_graph import StateAgentReact
+from llms.openaillm import OpenAILLM
+from tools.web_search import search_tavily
+from tools.salary_tool import consultar_sueldos_peru
+
+logger = logging.getLogger("backend.react_graph_builder")
+
+SYSTEM_PROMPT = """Eres el Asistente Profesional de Empleo y Carrera de ChambeaPe.
+Tu misión es guiar al usuario en su búsqueda de empleo, orientación laboral, optimización de CV y consultas salariales en Perú.
+
+Reglas de uso de herramientas:
+1. 'consultar_sueldos_peru': Invócala obligatoriamente cuando el usuario consulte por rangos salariales, cuánto se gana, remuneraciones o tarifas de mercado en Perú. Basa tu respuesta en los datos que devuelva la herramienta.
+2. 'search_tavily': Invócala cuando el usuario pida información reciente, noticias, empresas específicas, tecnologías emergentes o temas que requieran verificación en la web.
+3. Si el usuario hace preguntas generales (consejos de CV, preparación para entrevistas, preguntas motivacionales), responde directamente con tu conocimiento profesional sin invocar herramientas innecesarias.
+
+Estilo:
+- Profesional, cordial, empático y motivador.
+- Siempre invita al usuario a un siguiente paso accionable al final de tu respuesta.
+"""
 
 class ReactAgent:
     def __init__(self):
-        #self.llm_model = OpenAILLM().llm
-        #self.embedding_model = OpenAILLM().embedding_llm
-        self.graph = StateGraph(StateAgentReact)
+        self.tools = [search_tavily, consultar_sueldos_peru]
+        self.llm = OpenAILLM().llm.bind_tools(self.tools)
+        self.tool_node = ToolNode(self.tools)
+        self._compiled_graph = None
 
-    def graph_builder_react(self):
-        """Flujo de Langgraph para construir el agente conversacional"""
-        
-        nodes_agent = ReactNode()
-        # nodes
-        self.graph.add_node("main_query_analizer", nodes_agent.main_query_analizer)
-        self.graph.add_node("router_decision", nodes_agent.route_decision)
-        self.graph.add_node("node_rag", )
-        self.graph.add_node("node_search_web", )
-        self.graph.add_node("node_llm", nodes_agent.llm_reponse )
+    async def agent_node(self, state: StateAgentReact):
+        """Nodo principal que invoca al LLM con las herramientas vinculadas."""
+        messages = list(state["messages"])
+        if not messages or not isinstance(messages[0], SystemMessage):
+            messages = [SystemMessage(content=SYSTEM_PROMPT)] + messages
+        response = await self.llm.ainvoke(messages)
+        return {"messages": [response]}
 
-        # edges
-        self.graph.add_edge(START, "main_query_analizer")
-        self.graph.add_conditional_edges(
-            "main_query_analizer",
-            nodes_agent.route_decision,
-            {
-                "rag": "node_rag",
-                "web": "node_search_web",
-                "llm": "node_llm"
-            }
-        )
-        self.graph.add_edge("main_query_analizer", END)
-
-        # compilation
     def compile_react(self):
-        self.graph_builder_react()
-        #self.graph.compile()
-        return self.graph.compile()
+        """Compila y retorna el grafo ejecutable de forma idempotente."""
+        graph = StateGraph(StateAgentReact)
+        graph.add_node("agent", self.agent_node)
+        graph.add_node("tools", self.tool_node)
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+        graph.add_edge(START, "agent")
+        graph.add_conditional_edges(
+            "agent",
+            tools_condition,
+        )
+        graph.add_edge("tools", "agent")
+        return graph.compile()

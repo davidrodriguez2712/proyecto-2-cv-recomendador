@@ -74,7 +74,6 @@ async def get_current_user(token: Annotated[str, Depends(oauth2)]):
 
 @router.post("/token", response_model= Token, status_code= status.HTTP_200_OK)
 async def login(db: db_dependency, data: LoginRequest):
-    
     try: 
         # MÉTODO ASYNC:
         response = await db.execute(
@@ -82,19 +81,20 @@ async def login(db: db_dependency, data: LoginRequest):
         )
         user = response.scalar_one_or_none()
 
-        # MÉTODO SYNC:
-        # user = validate_user(db= db, user= data.username, password= data.password)
-        # user = db.query(User).filter(User.user == form_data.username).first()
-        # if user is None:
-        #     raise HTTPException(status_code= 401, detail="User doesnt exist")
-        # password_validate = pwd_context.verify(form_data.password, user.hashed_password)
-        # if not password_validate:
-        #     raise HTTPException(status_code= 401, detail= "Password is wrong.")
+        if user is None:
+            raise HTTPException(status_code= status.HTTP_401_UNAUTHORIZED, detail="User doesn't exist")
+        
+        password_validate = pwd_context.verify(data.password, user.hashed_password)
+        if not password_validate:
+            raise HTTPException(status_code= status.HTTP_401_UNAUTHORIZED, detail="Password is wrong.")
+
         token = create_token(id_user=user.id, rol= user.rol, user=user.username, expires_delta= timedelta(minutes=30))
         return {"access_token": token, "token_type": "bearer"}
+    except HTTPException:
+        raise
     except Exception as e:
         logger.debug(f"Error identificado: {e}")
-        #logger.debug(f"Datos del usuario traido de la base: {user}")
+        raise HTTPException(status_code= status.HTTP_500_INTERNAL_SERVER_ERROR, detail="Authentication server error")
 
 # @router.post("/token_antiguo", response_model= Token, status_code= status.HTTP_200_OK)
 # async def login(db: db_dependency, form_data: Annotated[OAuth2PasswordRequestForm, Depends()]):
