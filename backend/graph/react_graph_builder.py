@@ -28,7 +28,7 @@ class ReactAgent:
         self.tools = [search_tavily, consultar_sueldos_peru]
         self.llm = OpenAILLM().llm.bind_tools(self.tools)
         self.tool_node = ToolNode(self.tools)
-        self.graph = StateGraph(StateAgentReact)
+        self._compiled_graph = None
 
     async def agent_node(self, state: StateAgentReact):
         """Nodo principal que invoca al LLM con las herramientas vinculadas."""
@@ -38,19 +38,16 @@ class ReactAgent:
         response = await self.llm.ainvoke(messages)
         return {"messages": [response]}
 
-    def graph_builder_react(self):
-        """Construye el flujo ReAct con ToolNode y tools_condition."""
-        self.graph.add_node("agent", self.agent_node)
-        self.graph.add_node("tools", self.tool_node)
+    def compile_react(self):
+        """Compila y retorna el grafo ejecutable de forma idempotente."""
+        graph = StateGraph(StateAgentReact)
+        graph.add_node("agent", self.agent_node)
+        graph.add_node("tools", self.tool_node)
 
-        self.graph.add_edge(START, "agent")
-        self.graph.add_conditional_edges(
+        graph.add_edge(START, "agent")
+        graph.add_conditional_edges(
             "agent",
             tools_condition,
         )
-        self.graph.add_edge("tools", "agent")
-
-    def compile_react(self):
-        """Compila y retorna el grafo ejecutable."""
-        self.graph_builder_react()
-        return self.graph.compile()
+        graph.add_edge("tools", "agent")
+        return graph.compile()
