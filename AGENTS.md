@@ -212,3 +212,27 @@ Cualquier agente que trabaje en estabilizar o extender el código debe atender p
 
 9. **Conexión de Chat en Frontend (`ui/pages/Chat.py`):**
    - El widget `st.chat_input("Escriba su mensaje")` captura la entrada pero no la envía a ningún endpoint. Debe conectarse con `/agent/general-query` y renderizar el historial con `st.chat_message`.
+
+---
+
+## Cursor Cloud specific instructions
+
+Python packages live in `/opt/venv`. `python`, `uvicorn`, `streamlit`, and `pytest` are linked on `/usr/local/bin`. PostgreSQL 16 (extension `vector`) and Redis are started on boot.
+
+- API: `http://localhost:8000`. Run uvicorn from `backend/` (`uvicorn main:app --host 0.0.0.0 --port 8000`). Imports such as `routers` and `database` resolve from that directory.
+- UI: `http://localhost:8501` from `ui/` (`streamlit run app.py --server.address 0.0.0.0 --server.port 8501 --server.headless true`). `API_URL` defaults to `http://localhost:8000`.
+- Database: `postgresql+asyncpg://chambea:chambea@localhost:5432/chambea_pe`
+- Redis: `redis://localhost:6379/0`
+- Seeded local admin: username `admin`, password `admin123`.
+
+`ChatOpenAI` is constructed when the API imports, so `OPENAI_API_KEY` must be non-empty or uvicorn exits. If it is unset, boot writes a placeholder that only lets the process start. CV upload, salary RAG, and web search need real `OPENAI_API_KEY`, `TAVILY_API_KEY`, `PINECONE_API_KEY`, `HOST_BASECVS`, and `HOST_EMPLEOS`.
+
+Tests:
+
+```bash
+cd /workspace
+set -a && source .env && set +a
+PYTHONPATH=/workspace:/workspace/backend pytest backend/test -q
+```
+
+`pytest` and `pytest-asyncio` come from the environment install command. They are not in `requirements.txt`. The three tests in `backend/test/test_e2e_react_pipeline.py` call OpenAI and fail without a real key. The other tests pass with the local database and placeholder key.
